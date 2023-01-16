@@ -38,6 +38,7 @@ func (q *Queue) Put(item any) {
 func (q *Queue) Get() any {
 	q.lock.Lock()
 	defer q.lock.Unlock()
+
 	if q.Empty() {
 		return nil
 	}
