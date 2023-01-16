@@ -1,16 +1,20 @@
 package stack
 
-import ()
-
 type (
 	stack[T any] struct {
 		stack []T
 	}
 )
 
-// creates a new stack with type from expample
-func New[T any](example T) *stack[T] {
+// Create a new stack
+func New[T any]() *stack[T] {
 	return &stack[T]{}
+}
+
+func NewWithSize[T any](size int) *stack[T] {
+	return &stack[T]{
+		stack: make([]T, 0, size),
+	}
 }
 
 // IsEmpty: check if stack is empty
