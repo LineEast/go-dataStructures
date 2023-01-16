@@ -2,5 +2,6 @@ go 1.19
 
 use (
 	./stack
+	./lists/singly
 	./queues/queue
 )

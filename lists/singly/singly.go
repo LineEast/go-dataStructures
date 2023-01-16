@@ -1,24 +1,46 @@
 package singly
 
+type (
+	List[T any] struct {
+		root *Node[T]
+
+		len uint
+	}
+
+	Node[T any] struct {
+		body T
+
+		next *Node[T]
+	}
+)
+
 // New returns an initialized list.
-func New() *List {
-	return &List{}
+func New[T any]() *List[T] {
+	return &List[T]{}
 }
 
 // Len returns uint len of the list l
-func (l *List) Len() uint {
+func (l *List[T]) Len() uint {
 	return l.len
 }
 
 // Init initializes or clears list l.
-func (l *List) Clear() {
+func (l *List[T]) Clear() {
 	l.root = nil
 	l.len = 0
 }
 
-// Front returns the first element of list l or nil if the list is empty.
-func (l *List) Front() *node {
+func (l *List[T]) IsEmpty() bool {
 	if l.Len() == 0 {
+		return true
+	}
+
+	return false
+}
+
+// Front returns the first element of list l or nil if the list is empty.
+func (l *List[T]) Front() *Node[T] {
+	if l.IsEmpty() {
 		return nil
 	}
 
@@ -26,113 +48,137 @@ func (l *List) Front() *node {
 }
 
 // Back returns the last element of list l or nil if the list is empty.
-func (l *List) Back() *node {
-	if l.Len() == 0 {
+func (l *List[T]) Back() *Node[T] {
+	if l.IsEmpty() {
 		return nil
 	}
 
 	n := l.root
-	for n.next != nil {
+	for n.Next() != nil {
 		n = n.next
 	}
 
 	return n
 }
 
-func (l *List) PushBack(body any) {
-	node := &node{
-		body: body,
-	}
+// Push to the end of the l list
+func (l *List[T]) PushBack(body T) {
+	node := NewNode(body)
 
-	if l.len == 0 {
+	if l.IsEmpty() {
 		l.root = node
 	} else {
-		n := l.root
-		for n.next != nil {
-			n = n.next
-		}
-
-		n.next = node
+		l.Back().next = node
 	}
 
 	l.len++
 }
 
-func (l *List) PushFront(body *any) {
-	node := &node{
-		body: body,
-		next: l.root,
+// Push n node to the end of the l list
+func (l *List[T]) PushNodeBack(n *Node[T]) {
+	if l.IsEmpty() {
+		l.root = n
+	} else {
+		l.Back().next = n
 	}
 
-	l.root = node
+	l.len++
+}
+
+// Push list List to the back of the l List
+func (l *List[T]) PushListBack(list *List[T]) {
+	if l.IsEmpty() {
+		l.root = list.Front()
+	} else {
+		l.Back().next = list.Front()
+	}
+
+	l.len += list.Len()
+}
+
+// Push to the front of the l list
+func (l *List[T]) PushFront(body T) {
+	node := NewNode(body)
+
+	if l.IsEmpty() {
+		l.root = node
+	} else {
+		node.next = l.root
+		l.root = node
+	}
 
 	l.len++
+}
+
+// Push n node to the front of the l list
+func (l *List[T]) PushNodeFront(n *Node[T]) {
+	if l.IsEmpty() {
+		l.root = n
+	} else {
+		n.next = l.root
+		l.root = n
+	}
+
+	l.len++
+}
+
+// Push list List to the front of the l List
+func (l *List[T]) PushListFront(list *List[T]) {
+	if l.IsEmpty() {
+		l.root = list.Front()
+	} else {
+		l.Back().next = list.Front()
+	}
+
+	l.len += list.Len()
 }
 
 // Remove removes e from l if e is an element of list l.
-// It returns the element value e.body. The element must not be nil.
-func (l *List) Remove(e *node) any {
-	if l.root == e {
-		l.root = e.next
-		return e.body
+// The element must not be nil.
+func (l *List[T]) Remove(e *Node[T]) {
+	if l.IsEmpty() {
+		return
 	}
 
-	n := l.root
-	index := 0
-	for n.next != e {
-		n = n.next
-		index++
+	last := l.Front()
+
+	if last == e {
+		l.root = l.Front().Next()
+		e.next = nil
+		l.len--
+		return
 	}
 
-	last := l.root
-	for i := 0; i < index; i++ {
-		last = last.next
-	}
+	for n := l.Front(); n.Next() != e || n.Next() != nil; n = n.Next() {
+		if n == e {
+			last.next = n.Next()
+			e.next = nil
+			l.len--
+			return
+		}
 
-	last.next = n.next
-	return e.body
+		last = n
+	}
 }
 
-// // Returns body of first element
-// func (l *LinkedList) Front() any {
-// 	l.rLock()
-// 	defer l.rUnlock()
+// Create new node with b body
+func NewNode[T any](b T) *Node[T] {
+	return &Node[T]{
+		body: b,
+	}
+}
 
-// 	return l.root.body
-// }
+// Create empty node
+func NewEmptyNode[T any]() *Node[T] {
+	return &Node[T]{}
+}
 
-// // Returns body of last element
-// func (l *LinkedList) Back() any {
-// 	l.rLock()
-// 	defer l.rUnlock()
+// Set b body to the n Node
+func (n *Node[T]) SetBody(b T) {
+	n.body = b
+}
 
-// 	n := l.root
-// 	for n.next != nil {
-// 		n = n.next
-// 	}
-
-// 	return n.body
-// }
-
-// func (l *LinkedList) Len() uint {
-// 	l.rLock()
-// 	defer l.rUnlock()
-
-// 	return l.len
-// }
-
-// func (l *LinkedList) lock() {
-// 	l.mtx.Lock()
-// }
-
-// func (l *LinkedList) unlock() {
-// 	l.mtx.Unlock()
-// }
-
-// func (l *LinkedList) rLock() {
-// 	l.mtx.RLock()
-// }
-
-// func (l *LinkedList) rUnlock() {
-// 	l.mtx.RUnlock()
-// }
+// Get next Node from n Node
+func (n *Node[T]) Next() *Node[T] {
+	return n.next
+}
