@@ -2,7 +2,7 @@ package doubly
 
 type (
 	List[T any] struct {
-		haed, tail *Node[T]
+		head, tail *Node[T]
 
 		len uint
 	}
@@ -17,7 +17,7 @@ func (l *List[T]) Len() uint {
 }
 
 func (l *List[T]) Clear() {
-	l.haed, l.tail = nil, nil
+	l.head, l.tail = nil, nil
 }
 
 func (l *List[T]) IsEmpty() bool {
@@ -29,7 +29,7 @@ func (l *List[T]) IsEmpty() bool {
 }
 
 func (l *List[T]) Front() *Node[T] {
-	return l.haed
+	return l.head
 }
 
 func (l *List[T]) Back() *Node[T] {
@@ -40,12 +40,12 @@ func (l *List[T]) PushFront(body T) {
 	node := NewNode(body)
 
 	if l.IsEmpty() {
-		l.haed = node
+		l.head = node
 		l.tail = node
 	} else {
 		node.prev = l.Front()
 		l.Front().prev = node
-		l.haed = node
+		l.head = node
 	}
 
 	l.len++
@@ -53,22 +53,34 @@ func (l *List[T]) PushFront(body T) {
 
 func (l *List[T]) PushNodeFront(node *Node[T]) {
 	if l.IsEmpty() {
-		l.haed = node
+		l.head = node
 		l.tail = node
 	} else {
 		node.prev = l.Front()
 		l.Front().prev = node
-		l.haed = node
+		l.head = node
 	}
 
 	l.len++
+}
+
+func (l *List[T]) PushListFront(list *List[T]) {
+	if l.IsEmpty() {
+		l.head = list.head
+		l.tail = list.tail
+	} else {
+		l.tail.next = list.head
+		l.tail = list.tail
+	}
+
+	l.len += list.Len()
 }
 
 func (l *List[T]) PushBack(body T) {
 	node := NewNode(body)
 
 	if l.IsEmpty() {
-		l.haed = node
+		l.head = node
 		l.tail = node
 	} else {
 		node.prev = l.Back()
@@ -81,7 +93,7 @@ func (l *List[T]) PushBack(body T) {
 
 func (l *List[T]) PushNodeBack(node *Node[T]) {
 	if l.IsEmpty() {
-		l.haed = node
+		l.head = node
 		l.tail = node
 	} else {
 		node.prev = l.Back()

@@ -20,6 +20,12 @@ func NewEmptyNode[T any]() *Node[T] {
 	return &Node[T]{}
 }
 
+func (n *Node[T]) Clear() {
+	var t T
+	n.SetBody(t)
+	n.SetNext(nil)
+}
+
 // Set b body to the n Node
 func (n *Node[T]) SetBody(b T) {
 	n.body = b
@@ -32,4 +38,8 @@ func (n *Node[T]) Next() *Node[T] {
 
 func (n *Node[T]) Body() T {
 	return n.body
+}
+
+func (n *Node[T]) SetNext(node *Node[T]) {
+	n.next = node
 }

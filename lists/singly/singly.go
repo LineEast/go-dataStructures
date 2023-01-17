@@ -18,17 +18,16 @@ func (l *List[T]) Len() uint {
 	return l.len
 }
 
-// Init initializes or clears list l.
+// Clears list l and all nodes links in it.
 func (l *List[T]) Clear() {
 	go func() {
-		last := l.Front()
-		for n := last; n.Next() != nil; n = n.Next() {
-			last = n.next
-			n.next = nil
+		for n := l.Front(); n != nil; {
+			last := n.Next()
+			n.SetNext(nil)
+			n = last
 		}
 	}()
 
-	l.root = nil
 	l.len = 0
 }
 
