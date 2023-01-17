@@ -23,8 +23,8 @@ func (s *Stack[T]) IsEmpty() bool {
 }
 
 // Get len of s stack
-func (s *Stack[T]) Len() int {
-	return len(s.stack)
+func (s *Stack[T]) Len() uint {
+	return uint(len(s.stack))
 }
 
 // Clear s stack
@@ -38,19 +38,18 @@ func (s *Stack[T]) Push(value T) {
 }
 
 // Remove and return top element of stack.
-// Return false if stack is empty.
-func (s *Stack[T]) Pop() (T, bool) {
+func (s *Stack[T]) Pop() T {
 	if s.IsEmpty() {
-		var resutl T
-		return resutl, false
+		var result T
+		return result
 	}
 
 	element := s.stack[s.Len()-1]
 	s.stack = s.stack[:s.Len()-1]
-	return element, true
+	return element
 }
 
 // View the top item on the stack
-func (s *Stack[T]) Peek() (v T) {
+func (s *Stack[T]) Peek() T {
 	return s.stack[s.Len()-1]
 }

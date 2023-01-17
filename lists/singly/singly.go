@@ -26,10 +26,19 @@ func (l *List[T]) Len() uint {
 
 // Init initializes or clears list l.
 func (l *List[T]) Clear() {
+	go func() {
+		last := l.Front()
+		for n := last; n.Next() != nil; n = n.Next() {
+			last = n.next
+			n.next = nil
+		}
+	}()
+
 	l.root = nil
 	l.len = 0
 }
 
+// Check if l List is empty
 func (l *List[T]) IsEmpty() bool {
 	if l.Len() == 0 {
 		return true
@@ -40,10 +49,6 @@ func (l *List[T]) IsEmpty() bool {
 
 // Front returns the first element of list l or nil if the list is empty.
 func (l *List[T]) Front() *Node[T] {
-	if l.IsEmpty() {
-		return nil
-	}
-
 	return l.root
 }
 
@@ -133,8 +138,13 @@ func (l *List[T]) PushListFront(list *List[T]) {
 	l.len += list.Len()
 }
 
-// Remove removes e from l if e is an element of list l.
-// The element must not be nil.
+func (l *List[T]) PopFront() (v T) {
+	v = l.root.body
+	l.Remove(l.Front())
+	return
+}
+
+// Remove removes e from l if e is an element of list l
 func (l *List[T]) Remove(e *Node[T]) {
 	if l.IsEmpty() {
 		return
@@ -181,4 +191,8 @@ func (n *Node[T]) SetBody(b T) {
 // Get next Node from n Node
 func (n *Node[T]) Next() *Node[T] {
 	return n.next
+}
+
+func (n *Node[T]) Body() T {
+	return n.body
 }

@@ -16,7 +16,13 @@ func TestRemove(t *testing.T) {
 	l.PushNodeFront(n2)
 	l.PushNodeFront(n1)
 
-	l.Remove(n2)
+	l.Remove(nil)
 
-	spew.Dump(l)
+	l.Clear()
+
+	l.PushNodeBack(n1)
+	l.PushNodeBack(n2)
+	l.PushNodeBack(n3)
+
+	spew.Dump(l.Front())
 }
