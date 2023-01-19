@@ -16,4 +16,6 @@ func main() {
 	}
 
 	spew.Dump(l.List)
+	l.List.Remove(l.List.Back())
+	spew.Dump(l.List)
 }

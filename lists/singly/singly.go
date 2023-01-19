@@ -133,25 +133,28 @@ func (l *List[T]) PopFront() (v T) {
 }
 
 // Remove removes e from l if e is an element of list l
-func (l *List[T]) Remove(e *Node[T]) {
+func (l *List[T]) Remove(node *Node[T]) {
 	if l.IsEmpty() {
 		return
 	}
 
-	last := l.Front()
+	last := l.root
 
-	if last == e {
-		l.root = nil
-		e.next = nil
+	if last == node {
+		l.root = l.root.next
+		node.next = nil
+
 		l.len--
+
 		return
 	}
 
-	for n := l.Front(); n.Next() != e || n.Next() != nil; n = n.Next() {
-		if n == e {
-			last.next = n.Next()
-			e.next = nil
+	for n := l.root; n.next != node || n.next != nil; n = n.next {
+		if n == node {
+			last.next = n.next
+			node.next = nil
 			l.len--
+
 			return
 		}
 

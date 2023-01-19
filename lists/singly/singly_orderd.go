@@ -8,6 +8,9 @@ type (
 	}
 )
 
+// Get new single ordered linked list
+//
+// All methods with list from l.List
 func NewOrderdList[T any](f func(v1, v2 T) bool) *SinglyOrdered[T] {
 	return &SinglyOrdered[T]{
 		List:    New[T](),
@@ -15,6 +18,7 @@ func NewOrderdList[T any](f func(v1, v2 T) bool) *SinglyOrdered[T] {
 	}
 }
 
+// push into single ordered list
 func (l *SinglyOrdered[T]) Push(body T) {
 	node := &Node[T]{
 		body: body,
