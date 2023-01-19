@@ -4,5 +4,6 @@ use (
 	./stack
 	./lists/singly
 	./lists/doubly
+	./lists/skip
 	./queues/queue
 )

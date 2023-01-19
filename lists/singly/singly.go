@@ -2,7 +2,7 @@ package singly
 
 type (
 	List[T any] struct {
-		root *Node[T]
+		root, tail *Node[T]
 
 		len uint
 	}
@@ -20,13 +20,14 @@ func (l *List[T]) Len() uint {
 
 // Clears list l and all nodes links in it.
 func (l *List[T]) Clear() {
-	go func() {
-		for n := l.Front(); n != nil; {
-			last := n.Next()
-			n.SetNext(nil)
-			n = last
-		}
-	}()
+	for n := l.Front(); n != nil; {
+		last := n.Next()
+		n.SetNext(nil)
+		n = last
+	}
+
+	l.root = nil
+	l.tail = nil
 
 	l.len = 0
 }
@@ -47,16 +48,7 @@ func (l *List[T]) Front() *Node[T] {
 
 // Back returns the last element of list l or nil if the list is empty.
 func (l *List[T]) Back() *Node[T] {
-	if l.IsEmpty() {
-		return nil
-	}
-
-	n := l.root
-	for n.Next() != nil {
-		n = n.next
-	}
-
-	return n
+	return l.tail
 }
 
 // Push to the end of the l list
@@ -65,8 +57,10 @@ func (l *List[T]) PushBack(body T) {
 
 	if l.IsEmpty() {
 		l.root = node
+		l.tail = node
 	} else {
 		l.Back().next = node
+		l.tail = node
 	}
 
 	l.len++
@@ -76,8 +70,10 @@ func (l *List[T]) PushBack(body T) {
 func (l *List[T]) PushNodeBack(n *Node[T]) {
 	if l.IsEmpty() {
 		l.root = n
+		l.tail = n
 	} else {
 		l.Back().next = n
+		l.tail = n
 	}
 
 	l.len++
@@ -87,8 +83,10 @@ func (l *List[T]) PushNodeBack(n *Node[T]) {
 func (l *List[T]) PushListBack(list *List[T]) {
 	if l.IsEmpty() {
 		l.root = list.Front()
+		l.tail = list.Back()
 	} else {
 		l.Back().next = list.Front()
+		l.tail = list.Back()
 	}
 
 	l.len += list.Len()
@@ -100,6 +98,7 @@ func (l *List[T]) PushFront(body T) {
 
 	if l.IsEmpty() {
 		l.root = node
+		l.tail = node
 	} else {
 		node.next = l.root
 		l.root = node
@@ -112,6 +111,7 @@ func (l *List[T]) PushFront(body T) {
 func (l *List[T]) PushNodeFront(n *Node[T]) {
 	if l.IsEmpty() {
 		l.root = n
+		l.tail = n
 	} else {
 		n.next = l.root
 		l.root = n
@@ -122,13 +122,8 @@ func (l *List[T]) PushNodeFront(n *Node[T]) {
 
 // Push list List to the front of the l List
 func (l *List[T]) PushListFront(list *List[T]) {
-	if l.IsEmpty() {
-		l.root = list.Front()
-	} else {
-		l.Back().next = list.Front()
-	}
-
-	l.len += list.Len()
+	list.PushListBack(l)
+	l = list
 }
 
 func (l *List[T]) PopFront() (v T) {
@@ -146,7 +141,7 @@ func (l *List[T]) Remove(e *Node[T]) {
 	last := l.Front()
 
 	if last == e {
-		l.root = l.Front().Next()
+		l.root = nil
 		e.next = nil
 		l.len--
 		return
