@@ -151,6 +151,10 @@ func (l *List[T]) Remove(node *Node[T]) {
 
 	for n := l.root; n.next != node || n.next != nil; n = n.next {
 		if n == node {
+			if n == l.tail {
+				l.tail = last
+			}
+
 			last.next = n.next
 			node.next = nil
 			l.len--
